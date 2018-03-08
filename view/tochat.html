@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,  user-scalable=0;" name="viewport" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="format-detection" content="email=no" />
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <title>GOIM</title>
+    <style>
+        html {
+            font-size: 20px;
+            width: 100%;
+            height: 100%;
+        }
+
+        body{
+            margin: 0;
+            padding:0;
+        }
+
+        .body{
+            border: 0.13rem black solid;
+            border-radius: 0.2rem;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0.2rem;
+        }
+        .logoimg{
+            width: 3rem;
+            height: 3rem;
+            margin-left: 3.5rem;
+            margin-top: 0.1rem;
+        }
+
+        .post{
+            width: 10rem;
+            margin-top: 0.1rem;
+        }
+        .input{
+            width: 6rem;
+            height: 1.4rem;
+            border: 0.05rem black solid;
+            border-radius: 0.2rem;
+            font-size: 0.4rem;
+            outline: none;
+        }
+        .button{
+            width: 3rem;
+            height: 1.5rem;
+            border: 0.05rem black solid;
+            border-radius: 0.2rem;
+            font-size: 0.4rem;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+    </style>
+</head>
+<body>
+<div style="width: 10rem;height: 7rem;" class="body">
+    <div style="width: 10rem;height: 5rem;overflow-y: scroll;padding:10px" id="chatMianWindow">
+        <div style="font-size: 0.3rem;margin-top: 0.2rem"><span>马云兄：</span><span>我来了1111111111111111111111111111111111111111111111111</span></div>
+
+    </div>
+    <div style="" class="post">
+        <input type="text" class="input" id="message"   placeholder="">
+        <input type="hidden" value="{{.uuid}}" id="myUuid">
+        <button class ="button" id="go">怼出去</button>
+    </div>
+</div>
+</body>
+</html>
+<script src = "/js/jq.js"></script>
+<script src = "/vendor/layer/layer.js"></script>
+<script src = "/js/rem.js"></script>
+<script>
+    var conn;
+    // var message = document.getElementById("message").valueOf()
+    var message = $("#message").valueOf();
+    var send    = $("#go");
+    var myUuid  = $("#myUuid").val();
+    $(document).ready(function(){
+        conn = new WebSocket("ws://127.0.0.1:8975/ws");
+
+        conn.onopen = function (evt) {
+            var mesage = {
+                "user":"123",
+                "mes":'Hello Server!!!!!'
+            };
+            conn.send(JSON.stringify(mesage))
+        };
+        conn.onclose = function(evt) {
+
+        };
+        conn.onmessage = function(evt) {
+            // var data = JSON.parse(evt.data)
+            console.log(evt)
+            var html = '<div style="font-size: 0.3rem;margin-top: 0.2rem;color:red;"><span>'+data.fromUser+':</span><span>'+data.messageContext+'</span></div>'
+            $("#chatMianWindow").append(html)
+
+        }
+
+        send.click(function(){
+            if (message === ""){
+                layer.msg("打个标点符号吧！！！")
+            }
+
+            var mes = {
+                "fromUserUuid":myUuid,
+                "messageContext":$("#message").val(),
+                "toUser":"all"
+            };
+            conn.send(JSON.stringify(mes))
+
+        })
+    });
+
+
+
+
+</script>

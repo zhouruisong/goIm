@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,  user-scalable=0;" name="viewport" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta name="format-detection" content="email=no" />
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <title>GOIM</title>
+    <style>
+        html {
+            font-size: 20px;
+            width: 100%;
+            height: 100%;
+        }
+
+        body{
+            margin: 0;
+            padding:0;
+        }
+
+        .body{
+            border: 0.13rem black solid;
+            border-radius: 0.2rem;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0.2rem;
+        }
+        .logoimg{
+            width: 3rem;
+            height: 3rem;
+            margin-left: 3.5rem;
+            margin-top: 0.1rem;
+        }
+
+        .post{
+            width: 10rem;
+            margin-top: 0.1rem;
+        }
+        .input{
+            width: 3rem;
+            height: 1rem;
+            border: 0.05rem black solid;
+            border-radius: 0.2rem;
+            font-size: 0.4rem;
+            outline: none;
+        }
+        .button{
+            width: 3rem;
+            height: 1.1rem;
+            border: 0.05rem black solid;
+            border-radius: 0.2rem;
+            font-size: 0.4rem;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+    </style>
+</head>
+<body>
+<div></div>
+<div style="width: 10rem;height: 6rem;" class="body">
+    <div style="width: 10rem;">
+        <img class="logoimg" src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=888449068,2203941370&fm=27&gp=0.jpg" alt="" >
+    </div>
+    <div style="" class="post">
+        <input type="text" class="input" id="nickname"  placeholder="你的大名">
+        <input type="password" class="input"  id="password" placeholder="你的密码">
+        <button class ="button" id="go">Go</button>
+    </div>
+    <h5 style="font-size: 0.8rem">自动注册的,直接登入就好了</h5>
+</div>
+</body>
+</html>
+<script src = "/js/jq.js"></script>
+<script src = "/vendor/layer/layer.js"></script>
+<script src = "/js/rem.js"></script>
+        <script>
+            $(document).ready(function(){
+
+                $("#go").click(function () {
+                    var name = $("#nickname").val()
+                    var password = $("#password").val()
+                    if (name === ""){
+                        layer.msg("出来混总要说下名字");
+                        return false;
+                    }
+                    if (password === ""){
+                        layer.msg("密码呢？？？");
+                        return false;
+                    }
+
+                    layer.msg("正在进入");
+                    $.ajax({
+                        url:"/dologin",
+                        data:{nickname:name,password:password},
+                        type:"POST",
+                        success:function(result){
+                            if (result.result === true){
+                                setTimeout(1000)
+                                window.location = "/tochat"
+                            }else{
+                                layer.msg(result.message)
+                            }
+                        }});
+                })
+            });
+        </script>

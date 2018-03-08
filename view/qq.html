@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <h1>IM 即时聊天系统</h1>
+        <p>...</p>
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">输入昵称：</label>
+                <div class="col-sm-3">
+                    <input type="email" class="form-control" id="nickname" placeholder="如：化腾">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default" id="go">进入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src = "/js/jq.js"></script>
+<script src = "/vendor/layer/layer.js"></script>
+<script>
+    $(document).ready(function(){
+
+        $("#go").click(function () {
+            var name = $("#nickname").val()
+            if (name === ""){
+                layer.msg("出来混总要说下名字");
+                return false;
+            }
+            layer.msg("正在进入");
+            $.ajax({
+                url:"/join",
+                data:{nickname:name},
+                type:"POST",
+                success:function(result){
+                    if (result.result === true){
+                        setTimeout(1000)
+                        window.location = "/tochat"
+                    }
+                }});
+        })
+    });
+</script>
+
