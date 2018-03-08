@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"gochat/src/model"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -55,21 +57,23 @@ func (manger *ConnManger) WebSocketStart() {
 
 func (manger *ConnManger) Send(mes []byte) {
 	messageInfo := manger.ParseMessage(mes)
+	//根据uuid  得到 用户信息
+	user := model.User{}
+	userInfo := user.GetUserByUuid(messageInfo.FromUserUUid)
+
+	messageInfo.FromUserName = userInfo.Nickname
 	//大厅消息
 	if messageInfo.ToUser == "all" {
 		for _, conn := range manger.clients {
 			//本人不广播
-			if err := conn.Conn.WriteMessage(1, []byte(messageInfo.MessageContext)); err != nil {
+
+			if err := conn.Conn.WriteMessage(1, manger.MessageStructToJson(messageInfo)); err != nil {
 				log.Fatalf("发送消息遇到了错误:%v", err)
 			}
 
-			//if conn.Uuid != messageInfo.FromUserUUid {
-			//	err := conn.Conn.WriteMessage(1, []byte(messageInfo.MessageContext))
-			//	fmt.Println(err)
-			//}
 		}
 	} else if toConn, ok := manger.clients[messageInfo.FromUserUUid]; ok { //私信消息
-		toConn.Conn.WriteMessage(1, []byte(messageInfo.MessageContext))
+		toConn.Conn.WriteMessage(1, manger.MessageStructToJson(messageInfo))
 
 	} else {
 		fmt.Println("未知消息")
@@ -82,6 +86,14 @@ func (manger *ConnManger) ParseMessage(message []byte) Message {
 	mes := Message{}
 	json.Unmarshal(message, &mes)
 	return mes
+}
+
+func (manger *ConnManger) MessageStructToJson(message Message) []byte {
+	str, err := json.Marshal(message)
+	if err != nil {
+		log.Fatalf("结构体转换JSON:%v", err)
+	}
+	return str
 }
 
 func Ws(c *gin.Context) {
