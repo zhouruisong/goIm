@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 
 	"log"
@@ -38,18 +37,19 @@ type User struct {
 	Password string
 }
 
+//根据用户名查找用户信息
 func (this *User) GetUserByName(name string) *User {
 	DB.Where("nickname = ?", name).Find(&this)
-	fmt.Println(this)
 	return this
 }
 
+//根据uuid  查找用户信息
 func (this *User) GetUserByUuid(uuid string) *User {
 	DB.Where("uuid = ?", uuid).Find(&this)
-	fmt.Println(this)
 	return this
 }
 
+//创建用户
 func (this *User) CreateUser(name string, password string) bool {
 	uuid, _ := uuid2.NewV4()
 	this.Nickname = name

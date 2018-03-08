@@ -48,13 +48,14 @@ func (manger *ConnManger) WebSocketStart() {
 			//关闭连接
 			conn.Conn.Close()
 			delete(manger.clients, conn.Uuid)
-			fmt.Println("离开了：", conn.Uuid)
 		case mes := <-manger.message:
+			//消息处理
 			Manager.Send(mes)
 		}
 	}
 }
 
+//消息处理
 func (manger *ConnManger) Send(mes []byte) {
 	messageInfo := manger.ParseMessage(mes)
 	//根据uuid  得到 用户信息
@@ -65,7 +66,6 @@ func (manger *ConnManger) Send(mes []byte) {
 	//大厅消息
 	if messageInfo.ToUser == "all" {
 		for _, conn := range manger.clients {
-			//本人不广播
 
 			if err := conn.Conn.WriteMessage(1, manger.MessageStructToJson(messageInfo)); err != nil {
 				log.Fatalf("发送消息遇到了错误:%v", err)
@@ -82,12 +82,14 @@ func (manger *ConnManger) Send(mes []byte) {
 	//msgString := string(mes)
 }
 
+//解析message 结构体
 func (manger *ConnManger) ParseMessage(message []byte) Message {
 	mes := Message{}
 	json.Unmarshal(message, &mes)
 	return mes
 }
 
+//结构体转换为json
 func (manger *ConnManger) MessageStructToJson(message Message) []byte {
 	str, err := json.Marshal(message)
 	if err != nil {
@@ -96,6 +98,7 @@ func (manger *ConnManger) MessageStructToJson(message Message) []byte {
 	return str
 }
 
+//websocket  连接处理
 func Ws(c *gin.Context) {
 	res := c.Writer
 	req := c.Request
@@ -118,10 +121,12 @@ func Ws(c *gin.Context) {
 
 	Manager.resgister <- &Client{Uuid: uid, Conn: conn}
 
+	//并发读取
 	go read(conn)
 
 }
 
+//读取消息
 func read(conn *websocket.Conn) {
 
 	defer func() {
