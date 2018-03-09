@@ -89,8 +89,6 @@
                         layer.msg("密码呢？？？");
                         return false;
                     }
-
-                    layer.msg("正在进入");
                     $.ajax({
                         url:"/dologin",
                         data:{nickname:name,password:password},
@@ -100,6 +98,7 @@
                                 setTimeout(1000)
                                 window.location = "/tochat"
                             }else{
+
                                 layer.msg(result.message)
                             }
                         }});

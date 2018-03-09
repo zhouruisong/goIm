@@ -81,16 +81,13 @@
     var myUuid  = $("#myUuid").val();
     $(document).ready(function(){
         conn = new WebSocket("ws://127.0.0.1:8975/ws");
+        // conn = new WebSocket("ws://111.230.235.49:8975/ws");
 
         conn.onopen = function (evt) {
-            var mesage = {
-                "user":"123",
-                "mes":'Hello Server!!!!!'
-            };
-            conn.send(JSON.stringify(mesage))
+           layer.msg("连接成功")
         };
         conn.onclose = function(evt) {
-
+            layer.msg("断开连接")
         };
         conn.onmessage = function(evt) {
             var data = JSON.parse(evt.data)
@@ -119,10 +116,9 @@
             };
             conn.send(JSON.stringify(mes))
 
+            $("#message").val("")
+            layer.msg("发送成功")
+
         })
     });
-
-
-
-
 </script>
